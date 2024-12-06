@@ -12,6 +12,7 @@ class PrecastCLI:
 
         # Init
         parser_init = subparsers.add_parser('init', help='Create precast.json file')
+        parser_init.add_argument("--out-dir", default="")
         parser_init.set_defaults(func=self.init_project)
 
         # Create
@@ -27,7 +28,8 @@ class PrecastCLI:
         print("Hello")
 
     def init_project(self, *args, **kargs):
-        pass
+        with open(self.args.out_dir + "precast.json", "w") as file:
+            file.write("dummy")
 
     def create_component(self, *args, **kargs):
         pass

@@ -19,6 +19,14 @@ class TestPrecastCLIIntegration(unittest.TestCase):
     def setUp(self):
         """Set up the CLI script path."""
         self.cli_script = os.path.abspath("precast_core")
+        self.parent_dir = os.path.abspath(os.path.join(self.cli_script, os.pardir))
+        self.file_tests = os.path.join(self.parent_dir, "tmp_tests", "integration")
+
+        self.create_directories()
+
+    def create_directories(self):
+        if not os.path.exists(self.file_tests):
+            os.makedirs(self.file_tests)
 
     def run_cli(self, *args):
         """Helper function to run the CLI with subprocess."""
@@ -41,7 +49,7 @@ class TestPrecastCLIIntegration(unittest.TestCase):
         self.assertEqual(result.stdout, f"Hello\n")
 
     def test_init_with_success(self):
-        result = self.run_cli("init")
+        result = self.run_cli("init", "--out-dir", self.file_tests)
 
         self.assertEqual(result.returncode, SubprocessReturnCode.SUCCESS.value)
         # self.assertTrue(os.path.isfile(self.cli_script+"/precast.json"))
