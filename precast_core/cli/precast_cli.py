@@ -1,9 +1,15 @@
 import argparse
 import os
 
+from services.template import TemplateService
+
 
 class PrecastCLI:
-    def __init__(self):
+    def __init__(self, template_service:TemplateService|None=None):
+        # Services
+        self.template_service = template_service
+
+        # Parser
         self.parser = argparse.ArgumentParser(description="Precast CLI for creating components")
         subparsers = self.parser.add_subparsers()
 
@@ -13,6 +19,7 @@ class PrecastCLI:
 
         # Init
         parser_init = subparsers.add_parser('init', help='Create precast.json file')
+        parser_init.add_argument("--name", default=os.getcwd().split("\\")[-1])
         parser_init.add_argument("--out-dir", default="")
         parser_init.set_defaults(func=self.init_project)
 
@@ -30,7 +37,11 @@ class PrecastCLI:
 
     def init_project(self, *args, **kargs):
         with open(os.path.join(self.args.out_dir, "precast.json"), "w") as file:
-            file.write("dummy")
+            parameters = {
+                "name": self.args.name
+            }
+            init_file_content = self.template_service.generate_init_file(parameters)
+            file.write(init_file_content)
 
     def create_component(self, *args, **kargs):
         pass

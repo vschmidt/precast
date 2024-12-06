@@ -1,3 +1,4 @@
+import json
 import unittest
 import subprocess
 import os
@@ -49,11 +50,19 @@ class TestPrecastCLIIntegration(unittest.TestCase):
         self.assertEqual(result.stdout, f"Hello\n")
 
     def test_init_with_success(self):
-        result = self.run_cli("init", "--out-dir", self.file_tests)
+        project_name = "project_name"
+        file_dir = os.path.join(self.file_tests, "precast.json")
+
+        result = self.run_cli("init", "--out-dir", self.file_tests, "--name", project_name)
 
         self.assertEqual(result.returncode, SubprocessReturnCode.SUCCESS.value)
-        self.assertTrue(os.path.exists(os.path.join(self.file_tests, "precast.json")))
+        self.assertTrue(os.path.exists(file_dir))
 
+        with open(file_dir) as file:
+            content = json.loads(file.read())
+
+            self.assertEqual(content["name"], project_name)
+            
     def test_success_create_api(self):
         result = self.run_cli("create", "api")
 
