@@ -4,40 +4,36 @@ import argparse
 class PrecastCLI:
     def __init__(self):
         self.parser = argparse.ArgumentParser(description="Precast CLI for creating components")
-        self.subparsers = self.parser.add_subparsers(help='Create component')
+        subparsers = self.parser.add_subparsers()
 
         # Hello
-        self.parser.add_argument("--hello", "-hl", type=str, help="Hello")        
+        parser_hello = subparsers.add_parser('hello', help='Say hello')
+        parser_hello.set_defaults(func=self.hello)      
 
         # Init
-        self.init_parser = self.subparsers.add_parser('init', help='Create precast.json file')      
-        self.init_parser.add_argument(
-            '--name', '-n',
-            type=str,
-            help='Name of project'
-        )
+        parser_init = subparsers.add_parser('init', help='Create precast.json file')
+        parser_init.set_defaults(func=self.init_project)
 
         # Create
-        self.create_parser = self.subparsers.add_parser('create', help='[API]')
-        self.create_parser.add_argument(
-            'type',
-            type=str,
-            choices=['api', 'connector', 'service', 'repository'],  # List of valid values
-            help='Type of component (choices: api, connector, service, repository)'
-        )
+        parser_create = subparsers.add_parser('create', help='Add components to project')
+        subparsers_create = parser_create.add_subparsers()
+
+        # API creation
+        parser_api = subparsers_create.add_parser('api', help='Create API')
+        parser_api.set_defaults(func=self.create_component)
 
 
-    def hello(self):
-        print(f"Hello {self.args.hello}")
+    def hello(self, *args, **kargs):
+        print("Hello")
 
-    def init_project(self):
+    def init_project(self, *args, **kargs):
+        pass
+
+    def create_component(self, *args, **kargs):
         pass
 
     def run(self):
         """Parse arguments and execute the appropriate command."""
         self.args = self.parser.parse_args()
-
-        if self.args.hello:
-            self.hello()
-
        
+        self.args.func(self.args)

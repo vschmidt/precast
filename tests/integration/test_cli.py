@@ -34,22 +34,18 @@ class TestPrecastCLIIntegration(unittest.TestCase):
         result = self.run_cli("incorrect argument")
         self.assertEqual(result.returncode, SubprocessReturnCode.SHELL_BUILTIN_ERROR.value)
 
-    def test_help_argument(self):
-        random_number = randint(0,10)
-        for prefix in ["--hello", "-hl"]:
-            result = self.run_cli(prefix, str(random_number))
-    
-            self.assertEqual(result.returncode, SubprocessReturnCode.SUCCESS.value)
-            self.assertEqual(result.stdout, f"Hello {random_number}\n")
+    def test_help_argument(self):      
+        result = self.run_cli("hello")
+
+        self.assertEqual(result.returncode, SubprocessReturnCode.SUCCESS.value)
+        self.assertEqual(result.stdout, f"Hello\n")
 
     def test_init_with_success(self):
-        result = self.run_cli("init", "--name project_name")
+        result = self.run_cli("init")
 
-        for prefix in ["--name", "-n"]:
-            result = self.run_cli("init", prefix, "project_name")
-    
-            self.assertEqual(result.returncode, SubprocessReturnCode.SUCCESS.value)
-    
+        self.assertEqual(result.returncode, SubprocessReturnCode.SUCCESS.value)
+        # self.assertTrue(os.path.isfile(self.cli_script+"/precast.json"))
+
     def test_success_create_api(self):
         result = self.run_cli("create", "api")
 
