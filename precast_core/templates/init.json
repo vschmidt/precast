@@ -1,3 +1,7 @@
 {
-  "name": "$name"
+  "name": "$name",
+  "lenses": {
+    "components": {},
+    "deploy": {}
+  }
 }

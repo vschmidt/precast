@@ -63,7 +63,15 @@ class TestPrecastCLIIntegration(unittest.TestCase):
 
             self.assertEqual(content["name"], project_name)
             
-    def test_success_create_api(self):
-        result = self.run_cli("create", "api")
+    def test_success_add_api(self):       
+        file_dir = os.path.join(self.file_tests, "precast.json")
+
+        result = self.run_cli("add", "api")
 
         self.assertEqual(result.returncode, SubprocessReturnCode.SUCCESS.value)
+        self.assertTrue(os.path.exists(file_dir))
+
+        with open(file_dir) as file:
+            content = json.loads(file.read())
+
+            self.assertEqual(content["lenses"]["components"], {})

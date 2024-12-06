@@ -24,12 +24,12 @@ class PrecastCLI:
         parser_init.set_defaults(func=self.init_project)
 
         # Create
-        parser_create = subparsers.add_parser('create', help='Add components to project')
+        parser_create = subparsers.add_parser('add', help='Add components to project')
         subparsers_create = parser_create.add_subparsers()
 
         # API creation
-        parser_api = subparsers_create.add_parser('api', help='Create API')
-        parser_api.set_defaults(func=self.create_component)
+        parser_api = subparsers_create.add_parser('api', help='Create API')   
+        parser_api.set_defaults(func=self.add_component)
 
 
     def hello(self, *args, **kargs):
@@ -43,7 +43,7 @@ class PrecastCLI:
             init_file_content = self.template_service.generate_init_file(parameters)
             file.write(init_file_content)
 
-    def create_component(self, *args, **kargs):
+    def add_component(self, *args, **kargs):
         pass
 
     def run(self):
