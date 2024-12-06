@@ -1,4 +1,5 @@
 import argparse
+import os
 
 
 class PrecastCLI:
@@ -28,7 +29,7 @@ class PrecastCLI:
         print("Hello")
 
     def init_project(self, *args, **kargs):
-        with open(self.args.out_dir + "precast.json", "w") as file:
+        with open(os.path.join(self.args.out_dir, "precast.json"), "w") as file:
             file.write("dummy")
 
     def create_component(self, *args, **kargs):

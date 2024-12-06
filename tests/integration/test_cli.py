@@ -52,7 +52,7 @@ class TestPrecastCLIIntegration(unittest.TestCase):
         result = self.run_cli("init", "--out-dir", self.file_tests)
 
         self.assertEqual(result.returncode, SubprocessReturnCode.SUCCESS.value)
-        # self.assertTrue(os.path.isfile(self.cli_script+"/precast.json"))
+        self.assertTrue(os.path.exists(os.path.join(self.file_tests, "precast.json")))
 
     def test_success_create_api(self):
         result = self.run_cli("create", "api")
