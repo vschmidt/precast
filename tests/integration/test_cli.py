@@ -42,6 +42,14 @@ class TestPrecastCLIIntegration(unittest.TestCase):
             self.assertEqual(result.returncode, SubprocessReturnCode.SUCCESS.value)
             self.assertEqual(result.stdout, f"Hello {random_number}\n")
 
+    def test_init_with_success(self):
+        result = self.run_cli("init", "--name project_name")
+
+        for prefix in ["--name", "-n"]:
+            result = self.run_cli("init", prefix, "project_name")
+    
+            self.assertEqual(result.returncode, SubprocessReturnCode.SUCCESS.value)
+    
     def test_success_create_api(self):
         result = self.run_cli("create", "api")
 
