@@ -4,9 +4,20 @@ import argparse
 class PrecastCLI:
     def __init__(self):
         self.parser = argparse.ArgumentParser(description="Precast CLI for creating components")
+        self.subparsers = self.parser.add_subparsers(help='Create component')
 
         # Hello
-        self.parser.add_argument("--hello", "-hl", type=str, required=False, help="Hello")        
+        self.parser.add_argument("--hello", "-hl", type=str, help="Hello")        
+
+        # Create
+        create_parser = self.subparsers.add_parser('create', help='[API]')
+        create_parser.add_argument(
+            'type',
+            type=str,
+            choices=['api', 'connector', 'service', 'repository'],  # List of valid values
+            help='Type of component (choices: api, connector, service, repository)'
+        )
+
 
     def hello(self):
         print(f"Hello {self.args.hello}")
