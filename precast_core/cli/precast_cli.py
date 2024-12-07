@@ -23,12 +23,13 @@ class PrecastCLI:
         parser_init.add_argument("--out-dir", default="")
         parser_init.set_defaults(func=self.init_project)
 
-        # Create
-        parser_create = subparsers.add_parser('add', help='Add components to project')
-        subparsers_create = parser_create.add_subparsers()
+        # Add
+        parser_add = subparsers.add_parser('add', help='Add components to project')
+        subparsers_add = parser_add.add_subparsers()        
 
         # API creation
-        parser_api = subparsers_create.add_parser('api', help='Create API')   
+        parser_api = subparsers_add.add_parser('api', help='Create API')   
+        parser_api.add_argument("--name", default="", required=True)
         parser_api.set_defaults(func=self.add_component)
 
 

@@ -64,9 +64,10 @@ class TestPrecastCLIIntegration(unittest.TestCase):
             self.assertEqual(content["name"], project_name)
             
     def test_success_add_api(self):       
+        api_name = "api_name"
         file_dir = os.path.join(self.file_tests, "precast.json")
 
-        result = self.run_cli("add", "api")
+        result = self.run_cli("add", "api", "--name", api_name)
 
         self.assertEqual(result.returncode, SubprocessReturnCode.SUCCESS.value)
         self.assertTrue(os.path.exists(file_dir))
