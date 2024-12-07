@@ -1,12 +1,12 @@
 
 from cli import PrecastCLI
-from services.template import TemplateService
+from services.file_manager import FileManagerService
 
 if __name__=="__main__":
     # Services
-    template_service = TemplateService()
+    file_manager_service = FileManagerService()
 
     # CLI
-    cli = PrecastCLI(template_service)
+    cli = PrecastCLI(file_manager_service)
     cli.run()
 

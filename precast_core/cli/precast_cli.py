@@ -1,13 +1,13 @@
 import argparse
 import os
 
-from services.template import TemplateService
+from services.file_manager import FileManagerService
 
 
 class PrecastCLI:
-    def __init__(self, template_service:TemplateService|None=None):
+    def __init__(self, file_manager_service:FileManagerService|None=None):
         # Services
-        self.template_service = template_service
+        self.file_manager_service = file_manager_service
 
         # Parser
         self.parser = argparse.ArgumentParser(description="Precast CLI for creating components")
@@ -41,7 +41,7 @@ class PrecastCLI:
             parameters = {
                 "name": self.args.name
             }
-            init_file_content = self.template_service.generate_init_file(parameters)
+            init_file_content = self.file_manager_service.generate_init_file(parameters)
             file.write(init_file_content)
 
     def add_component(self, *args, **kargs):

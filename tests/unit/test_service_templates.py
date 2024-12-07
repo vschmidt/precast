@@ -1,11 +1,11 @@
 import os
 import unittest
 
-from precast_core.services.template import TemplateService
+from precast_core.services.file_manager import FileManagerService
 
 class TestPrecastCLIIntegration(unittest.TestCase):
     def setUp(self):
-        self.template_service = TemplateService()
+        self.file_manager_service = FileManagerService()
         self.template_folder = os.path.abspath("tests")
         self.init_file_template = os.path.join(self.template_folder, "snapshots", "init.json")
 
@@ -18,7 +18,7 @@ class TestPrecastCLIIntegration(unittest.TestCase):
             init_file_snapshot = f.read()
 
 
-        result = self.template_service.generate_init_file(parameters)
+        result = self.file_manager_service.generate_init_file(parameters)
 
         self.assertEqual(result, init_file_snapshot)
     
