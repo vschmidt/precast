@@ -37,12 +37,11 @@ class PrecastCLI:
         print("Hello")
 
     def init_project(self, *args, **kargs):
-        with open(os.path.join(self.args.out_dir, "precast.json"), "w") as file:
-            parameters = {
-                "name": self.args.name
-            }
-            init_file_content = self.file_manager_service.generate_init_file(parameters)
-            file.write(init_file_content)
+        init_file_path = os.path.join(self.args.out_dir, "precast.json")
+        parameters = {
+            "name": self.args.name
+        }
+        self.file_manager_service.generate_init_file(init_file_path, parameters)        
 
     def add_component(self, *args, **kargs):
         pass
