@@ -1,8 +1,9 @@
 import json
+import shutil
 import unittest
 import subprocess
 import os
-from random import randint
+import tempfile
 from enum import Enum
 
 class SubprocessReturnCode(Enum):
@@ -19,21 +20,20 @@ class TestPrecastCLIIntegration(unittest.TestCase):
 
     def setUp(self):
         """Set up the CLI script path."""
-        self.cli_script = os.path.abspath("precast_core")
-        self.parent_dir = os.path.abspath(os.path.join(self.cli_script, os.pardir))
-        self.file_tests = os.path.join(self.parent_dir, "tmp_tests", "integration")
-        self.snapshots_path_dir = os.path.join(self.parent_dir, "tests", "snapshots")
+        self.cli_script_dir = os.path.abspath("precast_core")       
+        self.tests_dir = os.path.abspath("tests") 
+        self.root_dir = os.path.abspath(os.path.join(self.tests_dir, os.pardir))
+        self.snapshots_dir = os.path.join(self.tests_dir, "snapshots") 
+        
+        self.output_tests_dir = tempfile.TemporaryDirectory()        
 
-        self.create_directories()
-
-    def create_directories(self):
-        if not os.path.exists(self.file_tests):
-            os.makedirs(self.file_tests)
+    def tearDown(self):
+        self.output_tests_dir.cleanup()
 
     def run_cli(self, *args):
         """Helper function to run the CLI with subprocess."""
         result = subprocess.run(
-            ["python", self.cli_script, *args],
+            ["python", self.cli_script_dir, *args],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True
@@ -52,9 +52,9 @@ class TestPrecastCLIIntegration(unittest.TestCase):
 
     def test_init_with_success(self):
         project_name = "project_name"
-        file_dir = os.path.join(self.file_tests, "precast.json")
+        file_dir = os.path.join(self.output_tests_dir.name, "precast.json")
 
-        result = self.run_cli("init", "--out-dir", self.file_tests, "--name", project_name)
+        result = self.run_cli("init", "--out-dir", self.output_tests_dir.name, "--name", project_name)
 
         self.assertEqual(result.returncode, SubprocessReturnCode.SUCCESS.value)
         self.assertTrue(os.path.exists(file_dir))
@@ -66,14 +66,16 @@ class TestPrecastCLIIntegration(unittest.TestCase):
             
     def test_success_add_api(self):       
         api_name = "api_name"
-        file_dir = os.path.join(self.snapshots_path_dir, "init.json")
+        template_file_dir = os.path.join(self.snapshots_dir, "init.json")  
+        new_file_dir = os.path.join(self.output_tests_dir.name, "precast.json")          
+        shutil.copyfile(template_file_dir, new_file_dir)
 
-        result = self.run_cli("add", "api", "--name", api_name, "--precast-file", file_dir)
+        result = self.run_cli("add", "api", "--name", api_name, "--precast-file", new_file_dir)
 
         self.assertEqual(result.returncode, SubprocessReturnCode.SUCCESS.value)
-        self.assertTrue(os.path.exists(file_dir))
+        self.assertTrue(os.path.exists(new_file_dir))
 
-        with open(file_dir) as file:
+        with open(new_file_dir) as file:
             content = json.loads(file.read())
 
             self.assertEqual(content["lenses"]["components"]["apis"], [])
