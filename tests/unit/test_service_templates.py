@@ -9,7 +9,8 @@ class TestPrecastCLIIntegration(unittest.TestCase):
     def setUp(self):
         self.template_folder = os.path.abspath("tests")
         self.parent_dir = os.path.abspath(os.path.join(self.template_folder, os.pardir))
-        self.output_folder_tests = os.path.join(self.parent_dir, "tmp_tests", "unit")       
+        self.output_folder_tests = os.path.join(self.parent_dir, "tmp_tests", "unit")  
+        self.snapshots_folder = os.path.join(self.template_folder, "snapshots")            
         
         self.file_manager_service = FileManagerService()
         self.create_directories()
@@ -32,3 +33,15 @@ class TestPrecastCLIIntegration(unittest.TestCase):
 
             self.assertEqual(out_file_data["name"], parameters["name"])
     
+    def test_load_project_data_with_success(self):
+        init_snapshot_path = os.path.join(self.snapshots_folder, "init.json")  
+
+        result = self.file_manager_service.load_project_data(init_snapshot_path)
+
+        self.assertEqual(type(result), dict)
+        self.assertEqual(result["name"], "project_name")
+        self.assertEqual(type(result["lenses"]), dict)
+        self.assertEqual(result["lenses"]["components"], {})
+        self.assertEqual(result["lenses"]["deploy"], {})
+
+        
