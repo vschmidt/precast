@@ -64,7 +64,7 @@ class TestPrecastCLIIntegration(unittest.TestCase):
 
             self.assertEqual(content["name"], project_name)
             
-    def test_success_add_api(self):       
+    def test_success_single_add_api(self):       
         api_name = "api_name"
         template_file_dir = os.path.join(self.snapshots_dir, "init.json")  
         new_file_dir = os.path.join(self.output_tests_dir.name, "precast.json")          
@@ -80,4 +80,22 @@ class TestPrecastCLIIntegration(unittest.TestCase):
 
             self.assertEqual(content["lenses"]["components"]["apis"], [
                 {"name": api_name}
+            ])
+
+    def test_success_multiple_add_api(self):       
+        api_names = ["api_name1", "api_name2"]
+        template_file_dir = os.path.join(self.snapshots_dir, "init.json")  
+        new_file_dir = os.path.join(self.output_tests_dir.name, "precast.json")          
+        shutil.copyfile(template_file_dir, new_file_dir)
+
+        for api in api_names:
+            result = self.run_cli("add", "api", "--name", api, "--precast-file", new_file_dir)      
+            self.assertEqual(result.returncode, SubprocessReturnCode.SUCCESS.value)
+
+        self.assertTrue(os.path.exists(new_file_dir))
+        with open(new_file_dir) as file:
+            content = json.loads(file.read())
+
+            self.assertEqual(content["lenses"]["components"]["apis"], [
+                {"name": api} for api in api_names
             ])

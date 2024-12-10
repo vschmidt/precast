@@ -32,7 +32,7 @@ class PrecastManagerService(FileManagerBase):
         if new_content["lenses"]["components"].get("apis"):
             new_content["lenses"]["components"]["apis"].append(
                 {
-                    "new_api": "new_value"
+                    "name": parameters["name"]
                 }
             )
         else:
