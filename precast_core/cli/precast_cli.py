@@ -45,7 +45,11 @@ class PrecastCLI:
         self.precast_manager_service.generate_init_file(init_file_path, parameters)        
 
     def add_component(self, *args, **kargs):
-        self.precast_manager_service.add_component(self.args.precast_file)  
+        parameters = {
+            "precast_file_path": self.args.precast_file, 
+            "name": self.args.name
+        }
+        self.precast_manager_service.add_component(parameters)  
         
 
     def run(self):

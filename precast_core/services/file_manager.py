@@ -24,8 +24,8 @@ class PrecastManagerService(FileManagerBase):
     def __init__(self):
         super().__init__()
 
-    def add_component(self, precast_file_path):
-        actual_content = self.load_project_data(precast_file_path)
+    def add_component(self, parameters):
+        actual_content = self.load_project_data(parameters["precast_file_path"])
         new_content = copy.deepcopy(actual_content)
 
         # only have API for now
@@ -37,8 +37,10 @@ class PrecastManagerService(FileManagerBase):
             )
         else:
             new_content["lenses"]["components"]["apis"] = [
-               
+               {
+                   "name": parameters["name"]
+               }
             ]
 
-        with open(precast_file_path, "w") as precast_file:
+        with open(parameters["precast_file_path"], "w") as precast_file:
             precast_file.write(json.dumps(new_content))

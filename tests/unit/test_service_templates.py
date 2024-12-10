@@ -61,8 +61,12 @@ class TestPrecastManagerService(unittest.TestCase):
         template_file_dir = os.path.join(self.snapshots_dir, "init.json")  
         new_file_dir = os.path.join(self.output_tests_dir.name, "precast.json")          
         shutil.copyfile(template_file_dir, new_file_dir)
+        parameters = {
+            "precast_file_path": new_file_dir,
+            "name": "api_name"
+        }
 
-        result = self.precast_manager_service.add_component(new_file_dir)
+        result = self.precast_manager_service.add_component(parameters)
 
         self.assertEqual(result, None)
 
@@ -70,4 +74,6 @@ class TestPrecastManagerService(unittest.TestCase):
             content = json.loads(file.read())
 
             self.assertEqual(type(content), dict)
-            self.assertEqual(content["lenses"]["components"]["apis"], [])
+            self.assertEqual(content["lenses"]["components"]["apis"], [{
+                "name": "api_name"
+            }])

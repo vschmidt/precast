@@ -78,4 +78,6 @@ class TestPrecastCLIIntegration(unittest.TestCase):
         with open(new_file_dir) as file:
             content = json.loads(file.read())
 
-            self.assertEqual(content["lenses"]["components"]["apis"], [])
+            self.assertEqual(content["lenses"]["components"]["apis"], [
+                {"name": api_name}
+            ])
