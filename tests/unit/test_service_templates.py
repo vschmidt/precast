@@ -3,7 +3,7 @@ import os
 import unittest
 import uuid
 
-from precast_core.services.file_manager import FileManagerService
+from precast_core.services.file_manager import FileManagerBase
 
 class TestPrecastCLIIntegration(unittest.TestCase):
     def setUp(self):
@@ -12,7 +12,7 @@ class TestPrecastCLIIntegration(unittest.TestCase):
         self.output_folder_tests = os.path.join(self.parent_dir, "tmp_tests", "unit")  
         self.snapshots_folder = os.path.join(self.template_folder, "snapshots")            
         
-        self.file_manager_service = FileManagerService()
+        self.file_manager_service = FileManagerBase()
         self.create_directories()
 
     def create_directories(self):

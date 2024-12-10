@@ -2,7 +2,7 @@ import json
 import os
 from string import Template
 
-class FileManagerService:
+class FileManagerBase:
     def __init__(self):
         self.template_folder = os.path.abspath("precast_core")
         self.init_file_template = os.path.join(self.template_folder, "templates", "init.json")

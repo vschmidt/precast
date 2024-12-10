@@ -1,11 +1,11 @@
 import argparse
 import os
 
-from services.file_manager import FileManagerService
+from services.file_manager import FileManagerBase
 
 
 class PrecastCLI:
-    def __init__(self, file_manager_service:FileManagerService|None=None):
+    def __init__(self, file_manager_service:FileManagerBase|None=None):
         # Services
         self.file_manager_service = file_manager_service
 
@@ -30,6 +30,7 @@ class PrecastCLI:
         # API creation
         parser_api = subparsers_add.add_parser('api', help='Create API')   
         parser_api.add_argument("--name", default="", required=True)
+        parser_api.add_argument("--precast-file", default="precast.json")
         parser_api.set_defaults(func=self.add_component)
 
 
@@ -44,7 +45,8 @@ class PrecastCLI:
         self.file_manager_service.generate_init_file(init_file_path, parameters)        
 
     def add_component(self, *args, **kargs):
-        pass
+        file_content = self.file_manager_service.load_project_data(self.args.precast_file)  
+        
 
     def run(self):
         """Parse arguments and execute the appropriate command."""
