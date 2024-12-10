@@ -22,6 +22,7 @@ class TestPrecastCLIIntegration(unittest.TestCase):
         self.cli_script = os.path.abspath("precast_core")
         self.parent_dir = os.path.abspath(os.path.join(self.cli_script, os.pardir))
         self.file_tests = os.path.join(self.parent_dir, "tmp_tests", "integration")
+        self.snapshots_path_dir = os.path.join(self.parent_dir, "tests", "snapshots")
 
         self.create_directories()
 
@@ -65,9 +66,9 @@ class TestPrecastCLIIntegration(unittest.TestCase):
             
     def test_success_add_api(self):       
         api_name = "api_name"
-        file_dir = os.path.join(self.file_tests, "precast.json")
+        file_dir = os.path.join(self.snapshots_path_dir, "init.json")
 
-        result = self.run_cli("add", "api", "--name", api_name)
+        result = self.run_cli("add", "api", "--name", api_name, "--precast-file", file_dir)
 
         self.assertEqual(result.returncode, SubprocessReturnCode.SUCCESS.value)
         self.assertTrue(os.path.exists(file_dir))
@@ -75,4 +76,4 @@ class TestPrecastCLIIntegration(unittest.TestCase):
         with open(file_dir) as file:
             content = json.loads(file.read())
 
-            self.assertEqual(content["lenses"]["components"], {})
+            self.assertEqual(content["lenses"]["components"]["apis"], [])

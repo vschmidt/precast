@@ -1,11 +1,12 @@
 import json
 import os
+import shutil
 import unittest
 import uuid
 
-from precast_core.services.file_manager import FileManagerBase
+from precast_core.services.file_manager import FileManagerBase, PrecastManagerService
 
-class TestPrecastCLIIntegration(unittest.TestCase):
+class TestFileManagerBase(unittest.TestCase):
     def setUp(self):
         self.template_folder = os.path.abspath("tests")
         self.parent_dir = os.path.abspath(os.path.join(self.template_folder, os.pardir))
@@ -41,7 +42,29 @@ class TestPrecastCLIIntegration(unittest.TestCase):
         self.assertEqual(type(result), dict)
         self.assertEqual(result["name"], "project_name")
         self.assertEqual(type(result["lenses"]), dict)
-        self.assertEqual(result["lenses"]["components"], {})
+        self.assertEqual(type(result["lenses"]["components"]), dict)
         self.assertEqual(result["lenses"]["deploy"], {})
 
-        
+class TestPrecastManagerService(unittest.TestCase):
+    def setUp(self): 
+        self.tests_dir = os.path.abspath("tests")
+        self.root_dir = os.path.abspath(os.path.join(self.tests_dir, os.pardir))
+        self.output_tests_dir = os.path.join(self.root_dir, "tmp_tests", "unit")  
+        self.snapshots_dir = os.path.join(self.tests_dir, "snapshots") 
+
+        self.precast_manager_service = PrecastManagerService()
+
+    def test_add_component_with_api_success(self):    
+        template_file_dir = os.path.join(self.snapshots_dir, "init.json")  
+        new_file_dir = os.path.join(self.output_tests_dir, "precast.json")          
+        shutil.copyfile(template_file_dir, new_file_dir)
+
+        result = self.precast_manager_service.add_component(new_file_dir)
+
+        self.assertEqual(result, None)
+
+        with open(new_file_dir, "r") as file:
+            content = json.loads(file.read())
+
+            self.assertEqual(type(content), dict)
+            self.assertEqual(content["lenses"]["components"]["apis"], [])

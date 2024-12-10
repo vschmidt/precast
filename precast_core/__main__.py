@@ -1,12 +1,12 @@
 
 from cli import PrecastCLI
-from services.file_manager import FileManagerBase
+from services.file_manager import PrecastManagerService
 
 if __name__=="__main__":
     # Services
-    file_manager_service = FileManagerBase()
+    precast_manager_service = PrecastManagerService()
 
     # CLI
-    cli = PrecastCLI(file_manager_service)
+    cli = PrecastCLI(precast_manager_service)
     cli.run()
 
