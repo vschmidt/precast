@@ -33,6 +33,11 @@ class PrecastCLI:
         parser_api.add_argument("--precast-file", default="precast.json")
         parser_api.set_defaults(func=self.add_component)
 
+        # Apply
+        parser_apply = subparsers.add_parser('apply', help='Apply precast file')
+        parser_apply.add_argument("--precast-file", default="precast.json")
+        parser_apply.set_defaults(func=self.apply)
+
 
     def hello(self, *args, **kargs):
         print("Hello")
@@ -48,7 +53,9 @@ class PrecastCLI:
         api_component = ApiComponent(**(self.args.__dict__ | {"type":"api"}))
         
         self.precast_manager_service.add_component(api_component)  
-        
+    
+    def apply(self, *args, **kargs):
+        pass
 
     def run(self):
         """Parse arguments and execute the appropriate command."""

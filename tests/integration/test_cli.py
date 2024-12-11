@@ -101,3 +101,12 @@ class TestPrecastCLIIntegration(unittest.TestCase):
             self.assertEqual(content["lenses"]["components"]["apis"], [
                 {"name": api} for api in api_names
             ])
+
+    def test_apply_with_success(self):
+        all_components_file_dir = os.path.join(self.snapshots_dir, "all_components.json")
+        output_dir = os.path.join(self.output_tests_dir.name, "src")
+
+        result = self.run_cli("apply", "--precast-file", all_components_file_dir)
+
+        self.assertEqual(result.returncode, SubprocessReturnCode.SUCCESS.value)
+        
