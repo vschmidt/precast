@@ -3,6 +3,7 @@ import shutil
 import unittest
 import subprocess
 import os
+import sys
 import tempfile
 from enum import Enum
 
@@ -20,6 +21,7 @@ class TestPrecastCLIIntegration(unittest.TestCase):
 
     def setUp(self):
         """Set up the CLI script path."""
+        self.python_path = sys.executable
         self.cli_script_dir = os.path.abspath("precast_core")       
         self.tests_dir = os.path.abspath("tests") 
         self.root_dir = os.path.abspath(os.path.join(self.tests_dir, os.pardir))
@@ -33,7 +35,7 @@ class TestPrecastCLIIntegration(unittest.TestCase):
     def run_cli(self, *args):
         """Helper function to run the CLI with subprocess."""
         result = subprocess.run(
-            ["python", self.cli_script_dir, *args],
+            [self.python_path, self.cli_script_dir, *args],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True

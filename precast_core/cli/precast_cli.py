@@ -1,8 +1,8 @@
 import argparse
 import os
 
-from services.file_manager import PrecastManagerService
-
+from precast_core.services.file_manager import PrecastManagerService
+from precast_core.validators.components import ApiComponent
 
 class PrecastCLI:
     def __init__(self, precast_manager_service:PrecastManagerService|None=None):
@@ -45,11 +45,9 @@ class PrecastCLI:
         self.precast_manager_service.generate_init_file(init_file_path, parameters)        
 
     def add_component(self, *args, **kargs):
-        parameters = {
-            "precast_file_path": self.args.precast_file, 
-            "name": self.args.name
-        }
-        self.precast_manager_service.add_component(parameters)  
+        api_component = ApiComponent(**(self.args.__dict__ | {"type":"api"}))
+        
+        self.precast_manager_service.add_component(api_component)  
         
 
     def run(self):

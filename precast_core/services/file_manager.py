@@ -3,6 +3,8 @@ import json
 import os
 from string import Template
 
+from precast_core.validators.components import ApiComponent
+
 class FileManagerBase:
     def __init__(self):
         self.template_folder = os.path.abspath("precast_core")
@@ -24,23 +26,23 @@ class PrecastManagerService(FileManagerBase):
     def __init__(self):
         super().__init__()
 
-    def add_component(self, parameters):
-        actual_content = self.load_project_data(parameters["precast_file_path"])
+    def add_component(self, api_component:ApiComponent):
+        actual_content = self.load_project_data(api_component.precast_file)
         new_content = copy.deepcopy(actual_content)
 
         # only have API for now
         if new_content["lenses"]["components"].get("apis"):
             new_content["lenses"]["components"]["apis"].append(
                 {
-                    "name": parameters["name"]
+                    "name": api_component.name
                 }
             )
         else:
             new_content["lenses"]["components"]["apis"] = [
                {
-                   "name": parameters["name"]
+                   "name": api_component.name
                }
             ]
 
-        with open(parameters["precast_file_path"], "w") as precast_file:
+        with open(api_component.precast_file, "w") as precast_file:
             precast_file.write(json.dumps(new_content))

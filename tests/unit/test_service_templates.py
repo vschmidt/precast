@@ -5,6 +5,7 @@ import shutil
 import unittest
 
 from precast_core.services.file_manager import FileManagerBase, PrecastManagerService
+from precast_core.validators.components import ApiComponent
 
 class TestFileManagerBase(unittest.TestCase):
     def setUp(self):
@@ -61,12 +62,13 @@ class TestPrecastManagerService(unittest.TestCase):
         template_file_dir = os.path.join(self.snapshots_dir, "init.json")  
         new_file_dir = os.path.join(self.output_tests_dir.name, "precast.json")          
         shutil.copyfile(template_file_dir, new_file_dir)
-        parameters = {
-            "precast_file_path": new_file_dir,
+        api_component = ApiComponent(**{
+            "type": "api",
+            "precast_file": new_file_dir,
             "name": "api_name"
-        }
+        })
 
-        result = self.precast_manager_service.add_component(parameters)
+        result = self.precast_manager_service.add_component(api_component)
 
         self.assertEqual(result, None)
 
