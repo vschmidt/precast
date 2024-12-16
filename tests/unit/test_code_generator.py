@@ -20,14 +20,14 @@ class TestCodeGeneratorService(unittest.TestCase):
         self.output_tests_dir.cleanup()
 
     def test_apply_file_with_api_success(self):        
-        main_file_dir = os.path.join(self.snapshots_dir, "components", "main.py")  
+        main_file_dir = os.path.join(self.snapshots_dir, "fake_app", "main.py")  
         expected_content = ""
         with open(main_file_dir, "r") as main_file:
             expected_content = main_file.read()
         
-        all_components_file_dir = os.path.join(self.snapshots_dir, "all_components.json")       
+        precast_file_dir = os.path.join(self.snapshots_dir, "fake_app", "precast.json")       
 
-        result = self.code_generator_service.apply(all_components_file_dir, self.output_tests_dir.name)
+        result = self.code_generator_service.apply(precast_file_dir, self.output_tests_dir.name)
 
         self.assertEqual(result, None)
         self.assertTrue(os.path.exists(self.output_tests_dir.name))

@@ -5,11 +5,16 @@
       "apis": [
         {
           "name": "orders_api",
-          "endpoints": [
+          "routers": [
             {
-              "name": "products",
-              "endpoint": "/orders/{id}",
-              "method": "GET"
+              "name": "orders_router",
+              "endpoints": [
+                {
+                  "name": "products",
+                  "endpoint": "/orders/{id}",
+                  "method": "GET"
+                }
+              ]
             }
           ]
         }
