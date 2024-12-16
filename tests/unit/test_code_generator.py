@@ -41,12 +41,21 @@ class TestCodeGeneratorService(unittest.TestCase):
             self.assertEqual(expected_content, main_file.read())
 
         # routers
-        os.path.exists(os.path.join(self.output_tests_dir.name, "endpoints", "__init__.py"))
-        
+        os.path.exists(
+            os.path.join(self.output_tests_dir.name, "endpoints", "__init__.py")
+        )
+
         with open(precast_file_dir, "r") as precast_file:
             precast_file_content = json.loads(precast_file.read())
-        
+
         for api in precast_file_content["lenses"]["components"]["apis"]:
             for router in api["routers"]:
-                self.assertTrue(os.path.exists(os.path.join(self.output_tests_dir.name, "endpoints", f"{router['name']}.py")))
-
+                self.assertTrue(
+                    os.path.exists(
+                        os.path.join(
+                            self.output_tests_dir.name,
+                            "endpoints",
+                            f"{router['name']}.py",
+                        )
+                    )
+                )

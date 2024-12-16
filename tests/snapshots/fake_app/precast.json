@@ -7,11 +7,21 @@
           "name": "orders_api",
           "routers": [
             {
-              "name": "orders_router",
+              "name": "foo_router",
               "endpoints": [
                 {
-                  "name": "products",
-                  "endpoint": "/orders/{id}",
+                  "name": "foo_endpoint",
+                  "endpoint": "/foo-endpoint/{id}",
+                  "method": "GET"
+                }
+              ]
+            },
+            {
+              "name": "bar_router",
+              "endpoints": [
+                {
+                  "name": "bar_endpoint",
+                  "endpoint": "/bar-endpoint/{id}",
                   "method": "GET"
                 }
               ]

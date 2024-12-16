@@ -23,13 +23,16 @@ class CodeGeneratorService:
 
         # extract infos
         apis = precast_configs["lenses"]["components"]["apis"]
-
-        endpoints_imports = "from src.api.endpoints import "
-        routers_inject = ""
+        routers = []
+        routers_inject = []
         for api in apis:
             for router in api["routers"]:
-                endpoints_imports += router["name"]
-                routers_inject += f"app.include_router({ router['name']})\n"
+                routers.append(router["name"])
+                routers_inject.append(f"app.include_router({router['name']})")
+
+        endpoints_imports = "from src.api.endpoints import "
+        endpoints_imports += ", ".join(routers)
+        routers_inject = "\n    ".join(routers_inject) + "\n"
 
         # Main.py
         main_template_parameters = {
@@ -46,9 +49,9 @@ class CodeGeneratorService:
 
         # Routers
         endpoints_file_dir = os.path.join(output_dir, "endpoints")
-        os.makedirs(endpoints_file_dir)            
-        open(os.path.join(endpoints_file_dir, "__init__.py"), 'a').close()
-        
+        os.makedirs(endpoints_file_dir)
+        open(os.path.join(endpoints_file_dir, "__init__.py"), "a").close()
+
         for api in apis:
             for router in api["routers"]:
                 endpoints_file_dir = os.path.join(output_dir, "endpoints")
