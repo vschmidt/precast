@@ -45,6 +45,10 @@ class CodeGeneratorService:
             output_file.write(result)
 
         # Routers
+        endpoints_file_dir = os.path.join(output_dir, "endpoints")
+        os.makedirs(endpoints_file_dir)            
+        open(os.path.join(endpoints_file_dir, "__init__.py"), 'a').close()
+        
         for api in apis:
             for router in api["routers"]:
                 endpoints_file_dir = os.path.join(output_dir, "endpoints")
