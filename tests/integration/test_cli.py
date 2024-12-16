@@ -104,9 +104,8 @@ class TestPrecastCLIIntegration(unittest.TestCase):
 
     def test_apply_with_success(self):
         all_components_file_dir = os.path.join(self.snapshots_dir, "all_components.json")
-        output_dir = os.path.join(self.output_tests_dir.name, "src")
 
-        result = self.run_cli("apply", "--precast-file", all_components_file_dir)
+        result = self.run_cli("apply", "--precast-file", all_components_file_dir, "--output-dir", self.output_tests_dir.name)
 
         self.assertEqual(result.returncode, SubprocessReturnCode.SUCCESS.value)
-        
+        self.assertTrue(os.path.exists(self.output_tests_dir.name))

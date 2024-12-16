@@ -1,13 +1,15 @@
 import argparse
 import os
 
+from precast_core.services.code_generator import CodeGeneratorService
 from precast_core.services.file_manager import PrecastManagerService
 from precast_core.validators.components import ApiComponent
 
 class PrecastCLI:
-    def __init__(self, precast_manager_service:PrecastManagerService|None=None):
+    def __init__(self, precast_manager_service:PrecastManagerService|None=None, code_generator_service: CodeGeneratorService|None=None):
         # Services
         self.precast_manager_service = precast_manager_service
+        self.code_generator_service = code_generator_service
 
         # Parser
         self.parser = argparse.ArgumentParser(description="Precast CLI for creating components")
@@ -36,6 +38,7 @@ class PrecastCLI:
         # Apply
         parser_apply = subparsers.add_parser('apply', help='Apply precast file')
         parser_apply.add_argument("--precast-file", default="precast.json")
+        parser_apply.add_argument("--output-dir", default="src")
         parser_apply.set_defaults(func=self.apply)
 
 
@@ -55,7 +58,7 @@ class PrecastCLI:
         self.precast_manager_service.add_component(api_component)  
     
     def apply(self, *args, **kargs):
-        pass
+        self.code_generator_service.apply(self.args.precast_file, self.args.output_dir)
 
     def run(self):
         """Parse arguments and execute the appropriate command."""
