@@ -7,6 +7,7 @@ import sys
 import tempfile
 from enum import Enum
 
+
 class SubprocessReturnCode(Enum):
     SUCCESS = 0
     GENERAL_ERROR = 1
@@ -17,17 +18,18 @@ class SubprocessReturnCode(Enum):
     SCRIPT_TERMINATED_BY_CTRL_C = 130
     EXIT_STATUS_OUT_OF_RANGE = 255
 
+
 class TestPrecastCLIIntegration(unittest.TestCase):
 
     def setUp(self):
         """Set up the CLI script path."""
         self.python_path = sys.executable
-        self.cli_script_dir = os.path.abspath("precast_core")       
-        self.tests_dir = os.path.abspath("tests") 
+        self.cli_script_dir = os.path.abspath("precast_core")
+        self.tests_dir = os.path.abspath("tests")
         self.root_dir = os.path.abspath(os.path.join(self.tests_dir, os.pardir))
-        self.snapshots_dir = os.path.join(self.tests_dir, "snapshots") 
-        
-        self.output_tests_dir = tempfile.TemporaryDirectory()        
+        self.snapshots_dir = os.path.join(self.tests_dir, "snapshots")
+
+        self.output_tests_dir = tempfile.TemporaryDirectory()
 
     def tearDown(self):
         self.output_tests_dir.cleanup()
@@ -38,15 +40,17 @@ class TestPrecastCLIIntegration(unittest.TestCase):
             [self.python_path, self.cli_script_dir, *args],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            text=True
+            text=True,
         )
         return result
-    
+
     def test_invalid_arguments(self):
         result = self.run_cli("incorrect argument")
-        self.assertEqual(result.returncode, SubprocessReturnCode.SHELL_BUILTIN_ERROR.value)
+        self.assertEqual(
+            result.returncode, SubprocessReturnCode.SHELL_BUILTIN_ERROR.value
+        )
 
-    def test_help_argument(self):      
+    def test_help_argument(self):
         result = self.run_cli("hello")
 
         self.assertEqual(result.returncode, SubprocessReturnCode.SUCCESS.value)
@@ -56,7 +60,9 @@ class TestPrecastCLIIntegration(unittest.TestCase):
         project_name = "project_name"
         file_dir = os.path.join(self.output_tests_dir.name, "precast.json")
 
-        result = self.run_cli("init", "--out-dir", self.output_tests_dir.name, "--name", project_name)
+        result = self.run_cli(
+            "init", "--out-dir", self.output_tests_dir.name, "--name", project_name
+        )
 
         self.assertEqual(result.returncode, SubprocessReturnCode.SUCCESS.value)
         self.assertTrue(os.path.exists(file_dir))
@@ -65,14 +71,16 @@ class TestPrecastCLIIntegration(unittest.TestCase):
             content = json.loads(file.read())
 
             self.assertEqual(content["name"], project_name)
-            
-    def test_success_single_add_api(self):       
+
+    def test_success_single_add_api(self):
         api_name = "api_name"
-        template_file_dir = os.path.join(self.snapshots_dir, "init.json")  
-        new_file_dir = os.path.join(self.output_tests_dir.name, "precast.json")          
+        template_file_dir = os.path.join(self.snapshots_dir, "init.json")
+        new_file_dir = os.path.join(self.output_tests_dir.name, "precast.json")
         shutil.copyfile(template_file_dir, new_file_dir)
 
-        result = self.run_cli("add", "api", "--name", api_name, "--precast-file", new_file_dir)
+        result = self.run_cli(
+            "add", "api", "--name", api_name, "--precast-file", new_file_dir
+        )
 
         self.assertEqual(result.returncode, SubprocessReturnCode.SUCCESS.value)
         self.assertTrue(os.path.exists(new_file_dir))
@@ -80,32 +88,41 @@ class TestPrecastCLIIntegration(unittest.TestCase):
         with open(new_file_dir) as file:
             content = json.loads(file.read())
 
-            self.assertEqual(content["lenses"]["components"]["apis"], [
-                {"name": api_name}
-            ])
+            self.assertEqual(
+                content["lenses"]["components"]["apis"], [{"name": api_name}]
+            )
 
-    def test_success_multiple_add_api(self):       
+    def test_success_multiple_add_api(self):
         api_names = ["api_name1", "api_name2"]
-        template_file_dir = os.path.join(self.snapshots_dir, "init.json")  
-        new_file_dir = os.path.join(self.output_tests_dir.name, "precast.json")          
+        template_file_dir = os.path.join(self.snapshots_dir, "init.json")
+        new_file_dir = os.path.join(self.output_tests_dir.name, "precast.json")
         shutil.copyfile(template_file_dir, new_file_dir)
 
         for api in api_names:
-            result = self.run_cli("add", "api", "--name", api, "--precast-file", new_file_dir)      
+            result = self.run_cli(
+                "add", "api", "--name", api, "--precast-file", new_file_dir
+            )
             self.assertEqual(result.returncode, SubprocessReturnCode.SUCCESS.value)
 
         self.assertTrue(os.path.exists(new_file_dir))
         with open(new_file_dir) as file:
             content = json.loads(file.read())
 
-            self.assertEqual(content["lenses"]["components"]["apis"], [
-                {"name": api} for api in api_names
-            ])
+            self.assertEqual(
+                content["lenses"]["components"]["apis"],
+                [{"name": api} for api in api_names],
+            )
 
     def test_apply_with_success(self):
         precast_file_dir = os.path.join(self.snapshots_dir, "fake_app", "precast.json")
 
-        result = self.run_cli("apply", "--precast-file", precast_file_dir, "--output-dir", self.output_tests_dir.name)
+        result = self.run_cli(
+            "apply",
+            "--precast-file",
+            precast_file_dir,
+            "--output-dir",
+            self.output_tests_dir.name,
+        )
 
         self.assertEqual(result.returncode, SubprocessReturnCode.SUCCESS.value)
         self.assertTrue(os.path.exists(self.output_tests_dir.name))
