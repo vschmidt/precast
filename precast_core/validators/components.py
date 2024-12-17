@@ -33,4 +33,5 @@ class ApiComponent(BaseComponent):
         return {
             "name": self.name,
             "is_default": self.is_default,
+            "routers": self.routers,
         }

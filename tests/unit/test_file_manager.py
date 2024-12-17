@@ -81,7 +81,9 @@ class TestPrecastManagerService(unittest.TestCase):
             apis = content["lenses"]["components"]["apis"]
 
             self.assertEqual(type(content), dict)
-            self.assertEqual(apis, [{"name": "api_name", "is_default": True}])
+            self.assertEqual(
+                apis, [{"name": "api_name", "is_default": True, "routers": []}]
+            )
 
     def test_add_two_api_success(self):
         new_file_dir = self.copy_file_to_temp_dir("without_components.json")
@@ -103,7 +105,7 @@ class TestPrecastManagerService(unittest.TestCase):
             self.assertEqual(
                 apis,
                 [
-                    {"name": "api_name_1", "is_default": True},
-                    {"name": "api_name_2", "is_default": False},
+                    {"name": "api_name_1", "is_default": True, "routers": []},
+                    {"name": "api_name_2", "is_default": False, "routers": []},
                 ],
             )
