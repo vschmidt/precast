@@ -2,11 +2,16 @@ import json
 import os
 from string import Template
 
+
 class CodeGeneratorService:
     def __init__(self):
         self.template_folder = os.path.abspath("precast_core")
-        self.main_file_template = os.path.join(self.template_folder, "templates", "main.py")
-        self.router_file_template = os.path.join(self.template_folder, "templates", "router.py")
+        self.main_file_template = os.path.join(
+            self.template_folder, "templates", "main.py"
+        )
+        self.router_file_template = os.path.join(
+            self.template_folder, "templates", "router.py"
+        )
 
     def apply(self, precast_file_dir: str, output_dir: str):
         """Apply the file changes"""
@@ -47,18 +52,20 @@ class CodeGeneratorService:
 
         return endpoints_imports, routers_inject_str
 
-    def _generate_main_py(self, output_dir: str, imports: str, routers: str, apis: list):
+    def _generate_main_py(
+        self, output_dir: str, imports: str, routers: str, apis: list
+    ):
         """Generate the main.py file based on the template."""
         main_template_parameters = {
             "imports": imports,
             "routers": routers,
-            "api_name": apis[0]["name"] if apis else ""
+            "api_name": apis[0]["name"] if apis else "",
         }
 
         self._write_file_from_template(
             template_path=self.main_file_template,
             output_path=os.path.join(output_dir, "main.py"),
-            parameters=main_template_parameters
+            parameters=main_template_parameters,
         )
 
     def _generate_router_files(self, output_dir: str, apis: list):
@@ -76,10 +83,12 @@ class CodeGeneratorService:
                     self._write_file_from_template(
                         template_path=self.router_file_template,
                         output_path=os.path.join(endpoints_dir, f"{router_name}.py"),
-                        parameters={}
+                        parameters={},
                     )
 
-    def _write_file_from_template(self, template_path: str, output_path: str, parameters: dict):
+    def _write_file_from_template(
+        self, template_path: str, output_path: str, parameters: dict
+    ):
         """Write a file from a template with the given parameters."""
         with open(template_path, "r") as template_file:
             template = Template(template_file.read())

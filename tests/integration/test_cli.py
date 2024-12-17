@@ -89,7 +89,8 @@ class TestPrecastCLIIntegration(unittest.TestCase):
             content = json.loads(file.read())
 
             self.assertEqual(
-                content["lenses"]["components"]["apis"], [{"name": api_name}]
+                content["lenses"]["components"]["apis"],
+                [{"name": api_name, "is_default": True}],
             )
 
     def test_success_multiple_add_api(self):
@@ -110,7 +111,10 @@ class TestPrecastCLIIntegration(unittest.TestCase):
 
             self.assertEqual(
                 content["lenses"]["components"]["apis"],
-                [{"name": api} for api in api_names],
+                [
+                    {"name": "api_name1", "is_default": True},
+                    {"name": "api_name2", "is_default": False},
+                ],
             )
 
     def test_apply_with_success(self):

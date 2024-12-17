@@ -37,10 +37,12 @@ class PrecastManagerService(FileManagerBase):
         # only have API for now
         if new_content["lenses"]["components"].get("apis"):
             new_content["lenses"]["components"]["apis"].append(
-                {"name": api_component.name}
+                {"name": api_component.name, "is_default": False}
             )
         else:
-            new_content["lenses"]["components"]["apis"] = [{"name": api_component.name}]
+            new_content["lenses"]["components"]["apis"] = [
+                {"name": api_component.name, "is_default": True}
+            ]
 
         with open(api_component.precast_file, "w") as precast_file:
             precast_file.write(json.dumps(new_content))

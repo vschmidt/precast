@@ -5,6 +5,7 @@
       "apis": [
         {
           "name": "orders_api",
+          "is_default": true,
           "routers": [
             {
               "name": "foo_router",

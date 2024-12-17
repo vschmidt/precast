@@ -5,7 +5,7 @@ import shutil
 import unittest
 
 from precast_core.services.file_manager import FileManagerBase, PrecastManagerService
-from precast_core.validators.components import ApiComponent
+from precast_core.validators.components import ApiComponent, Endpoint
 
 
 class TestFileManagerBase(unittest.TestCase):
@@ -66,7 +66,7 @@ class TestPrecastManagerService(unittest.TestCase):
         shutil.copyfile(template_file_dir, new_file_dir)
         return new_file_dir
 
-    def test_add_api_success(self):
+    def test_add_one_api_success(self):
         new_file_dir = self.copy_file_to_temp_dir("without_components.json")
         api_component = ApiComponent(
             **{"type": "api", "precast_file": new_file_dir, "name": "api_name"}
@@ -78,10 +78,32 @@ class TestPrecastManagerService(unittest.TestCase):
 
         with open(new_file_dir, "r") as file:
             content = json.loads(file.read())
+            apis = content["lenses"]["components"]["apis"]
 
             self.assertEqual(type(content), dict)
-            self.assertEqual(
-                content["lenses"]["components"]["apis"], [{"name": "api_name"}]
-            )
+            self.assertEqual(apis, [{"name": "api_name", "is_default": True}])
 
-    
+    def test_add_two_api_success(self):
+        new_file_dir = self.copy_file_to_temp_dir("without_components.json")
+        api_component_1 = ApiComponent(
+            **{"type": "api", "precast_file": new_file_dir, "name": "api_name_1"}
+        )
+        api_component_2 = ApiComponent(
+            **{"type": "api", "precast_file": new_file_dir, "name": "api_name_2"}
+        )
+
+        self.precast_manager_service.add_component(api_component_1)
+        self.precast_manager_service.add_component(api_component_2)
+
+        with open(new_file_dir, "r") as file:
+            content = json.loads(file.read())
+            apis = content["lenses"]["components"]["apis"]
+
+            self.assertEqual(len(apis), 2)
+            self.assertEqual(
+                apis,
+                [
+                    {"name": "api_name_1", "is_default": True},
+                    {"name": "api_name_2", "is_default": False},
+                ],
+            )
