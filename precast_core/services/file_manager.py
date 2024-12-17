@@ -3,7 +3,7 @@ import json
 import os
 from string import Template
 
-from precast_core.validators.components import ApiComponent
+from precast_core.validators.components import ApiComponent, BaseComponent
 
 
 class FileManagerBase:
@@ -30,19 +30,30 @@ class PrecastManagerService(FileManagerBase):
     def __init__(self):
         super().__init__()
 
-    def add_component(self, api_component: ApiComponent):
-        actual_content = self.load_project_data(api_component.precast_file)
-        new_content = copy.deepcopy(actual_content)
+    def add_component(self, component: BaseComponent):
+        precast_content = self.load_project_data(component.precast_file)
 
-        # only have API for now
-        if new_content["lenses"]["components"].get("apis"):
-            new_content["lenses"]["components"]["apis"].append(
-                {"name": api_component.name, "is_default": False}
-            )
-        else:
-            new_content["lenses"]["components"]["apis"] = [
-                {"name": api_component.name, "is_default": True}
-            ]
+        if component.type == "api":
+            if precast_content["lenses"]["components"].get("apis"):
+                precast_content["lenses"]["components"]["apis"].append(
+                    component.to_precast_fields()
+                )
+            else:
+                component.is_default = True
+                precast_content["lenses"]["components"]["apis"] = [
+                    component.to_precast_fields()
+                ]
+        elif component.type == "router":
+            apis = precast_content["lenses"]["components"]["apis"]
+            default_api = list(filter(lambda x: x["is_default"], apis))[0]
 
-        with open(api_component.precast_file, "w") as precast_file:
-            precast_file.write(json.dumps(new_content))
+            if default_api.get("routers"):
+                precast_content["lenses"]["components"]["apis"].append(
+                    component.to_precast_fields()
+                )
+            else:
+                component.is_default = True
+                default_api["routers"] = [component.to_precast_fields()]
+
+        with open(component.precast_file, "w") as precast_file:
+            precast_file.write(json.dumps(precast_content))
