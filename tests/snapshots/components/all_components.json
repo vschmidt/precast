@@ -1,0 +1,35 @@
+{
+  "name": "project_name",
+  "lenses": {
+    "components": {
+      "apis": [
+        {
+          "name": "orders_api",
+          "routers": [
+            {
+              "name": "foo_router",
+              "endpoints": [
+                {
+                  "name": "foo_endpoint",
+                  "endpoint": "/foo-endpoint/{id}",
+                  "method": "GET"
+                }
+              ]
+            },
+            {
+              "name": "bar_router",
+              "endpoints": [
+                {
+                  "name": "bar_endpoint",
+                  "endpoint": "/bar-endpoint/{id}",
+                  "method": "GET"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "deploy": {}
+  }
+}

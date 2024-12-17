@@ -60,10 +60,14 @@ class TestPrecastManagerService(unittest.TestCase):
     def tearDown(self):
         self.output_tests_dir.cleanup()
 
-    def test_add_component_with_api_success(self):
-        template_file_dir = os.path.join(self.snapshots_dir, "init.json")
+    def copy_file_to_temp_dir(self, file):
+        template_file_dir = os.path.join(self.snapshots_dir, "components", file)
         new_file_dir = os.path.join(self.output_tests_dir.name, "precast.json")
         shutil.copyfile(template_file_dir, new_file_dir)
+        return new_file_dir
+
+    def test_add_api_success(self):
+        new_file_dir = self.copy_file_to_temp_dir("without_components.json")
         api_component = ApiComponent(
             **{"type": "api", "precast_file": new_file_dir, "name": "api_name"}
         )
@@ -79,3 +83,5 @@ class TestPrecastManagerService(unittest.TestCase):
             self.assertEqual(
                 content["lenses"]["components"]["apis"], [{"name": "api_name"}]
             )
+
+    
