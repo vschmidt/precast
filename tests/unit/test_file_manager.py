@@ -5,7 +5,7 @@ import shutil
 import unittest
 
 from precast_core.services.file_manager import FileManagerBase, PrecastManagerService
-from precast_core.validators.components import ApiComponent, Endpoint
+from precast_core.validators.components import ApiComponent
 
 
 class TestFileManagerBase(unittest.TestCase):

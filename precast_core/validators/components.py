@@ -7,12 +7,12 @@ class BaseComponent(BaseModel):
     type: str
 
 
-class Endpoint(BaseComponent):
+class EndpointComponent(BaseComponent):
     endpoint: str
     method: str
 
 
-class Router(BaseComponent):
+class RouterComponent(BaseComponent):
     precast_file: str
     api: Optional[str]
 
@@ -20,4 +20,4 @@ class Router(BaseComponent):
 class ApiComponent(BaseComponent):
     precast_file: str
     is_default: bool = False
-    routers: str = []
+    routers: list = []

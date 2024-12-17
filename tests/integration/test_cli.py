@@ -43,7 +43,7 @@ class TestPrecastCLIIntegration(unittest.TestCase):
             text=True,
         )
         return result
-    
+
     def copy_file_to_temp_dir(self, file):
         template_file_dir = os.path.join(self.snapshots_dir, "components", file)
         new_file_dir = os.path.join(self.output_tests_dir.name, "precast.json")
