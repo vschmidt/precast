@@ -1,71 +1,78 @@
 import argparse
 import os
+from typing import Optional
 
 from precast_core.services.code_generator import CodeGeneratorService
 from precast_core.services.file_manager import PrecastManagerService
 from precast_core.validators.components import ApiComponent
 
-
 class PrecastCLI:
     def __init__(
         self,
-        precast_manager_service: PrecastManagerService | None = None,
-        code_generator_service: CodeGeneratorService | None = None,
+        precast_manager_service: Optional[PrecastManagerService] = None,
+        code_generator_service: Optional[CodeGeneratorService] = None,
     ):
-        # Services
-        self.precast_manager_service = precast_manager_service
-        self.code_generator_service = code_generator_service
+        self.precast_manager_service = precast_manager_service or PrecastManagerService()
+        self.code_generator_service = code_generator_service or CodeGeneratorService()
+        self.parser = self._initialize_parser()
 
-        # Parser
-        self.parser = argparse.ArgumentParser(
-            description="Precast CLI for creating components"
-        )
-        subparsers = self.parser.add_subparsers()
+    def _initialize_parser(self) -> argparse.ArgumentParser:
+        """Initialize the CLI argument parser."""
+        parser = argparse.ArgumentParser(description="Precast CLI for managing components")
+        subparsers = parser.add_subparsers()
 
-        # Hello
+        # "hello" command
         parser_hello = subparsers.add_parser("hello", help="Say hello")
         parser_hello.set_defaults(func=self.hello)
 
-        # Init
+        # "init" command
         parser_init = subparsers.add_parser("init", help="Create precast.json file")
-        parser_init.add_argument("--name", default=os.getcwd().split("\\")[-1])
-        parser_init.add_argument("--out-dir", default="")
+        parser_init.add_argument("--name", default=os.getcwd().split(os.sep)[-1], help="Project name")
+        parser_init.add_argument("--out-dir", default="", help="Output directory for precast.json")
         parser_init.set_defaults(func=self.init_project)
 
-        # Add
-        parser_add = subparsers.add_parser("add", help="Add components to project")
+        # "add" command
+        parser_add = subparsers.add_parser("add", help="Add components to the project")
         subparsers_add = parser_add.add_subparsers()
 
-        # API creation
-        parser_api = subparsers_add.add_parser("api", help="Create API")
-        parser_api.add_argument("--name", default="", required=True)
-        parser_api.add_argument("--precast-file", default="precast.json")
-        parser_api.set_defaults(func=self.add_component)
+        # Generic "add" sub-command
+        for component_type in ["api", "router"]:
+            parser_component = subparsers_add.add_parser(component_type, help=f"Create {component_type.capitalize()} component")
+            parser_component.add_argument("--name", required=True, help=f"Name of the {component_type.capitalize()}")
+            parser_component.add_argument("--precast-file", default="precast.json", help="Path to the precast.json file")
+            parser_component.set_defaults(func=self.add_component, type=component_type)
 
-        # Apply
-        parser_apply = subparsers.add_parser("apply", help="Apply precast file")
-        parser_apply.add_argument("--precast-file", default="precast.json")
-        parser_apply.add_argument("--output-dir", default="src")
+        # "apply" command
+        parser_apply = subparsers.add_parser("apply", help="Generate code from precast file")
+        parser_apply.add_argument("--precast-file", default="precast.json", help="Path to the precast.json file")
+        parser_apply.add_argument("--output-dir", default="src", help="Output directory for generated code")
         parser_apply.set_defaults(func=self.apply)
 
-    def hello(self, *args, **kargs):
+        return parser
+
+    def hello(self, args):
+        """Print a hello message."""
         print("Hello")
 
-    def init_project(self, *args, **kargs):
-        init_file_path = os.path.join(self.args.out_dir, "precast.json")
-        parameters = {"name": self.args.name}
+    def init_project(self, args):
+        """Initialize a new precast.json file."""
+        init_file_path = os.path.join(args.out_dir, "precast.json")
+        parameters = {"name": args.name}
         self.precast_manager_service.generate_init_file(init_file_path, parameters)
 
-    def add_component(self, *args, **kargs):
-        api_component = ApiComponent(**(self.args.__dict__ | {"type": "api"}))
+    def add_component(self, args):
+        """Add a new component to the precast.json file."""
+        component = ApiComponent(type=args.type, name=args.name, precast_file=args.precast_file)
+        self.precast_manager_service.add_component(component)
 
-        self.precast_manager_service.add_component(api_component)
-
-    def apply(self, *args, **kargs):
-        self.code_generator_service.apply(self.args.precast_file, self.args.output_dir)
+    def apply(self, args):
+        """Generate code based on the precast.json file."""
+        self.code_generator_service.apply(args.precast_file, args.output_dir)
 
     def run(self):
         """Parse arguments and execute the appropriate command."""
-        self.args = self.parser.parse_args()
-
-        self.args.func(self.args)
+        args = self.parser.parse_args()
+        if hasattr(args, "func"):
+            args.func(args)
+        else:
+            self.parser.print_help()

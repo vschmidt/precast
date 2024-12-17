@@ -43,6 +43,12 @@ class TestPrecastCLIIntegration(unittest.TestCase):
             text=True,
         )
         return result
+    
+    def copy_file_to_temp_dir(self, file):
+        template_file_dir = os.path.join(self.snapshots_dir, "components", file)
+        new_file_dir = os.path.join(self.output_tests_dir.name, "precast.json")
+        shutil.copyfile(template_file_dir, new_file_dir)
+        return new_file_dir
 
     def test_invalid_arguments(self):
         result = self.run_cli("incorrect argument")
@@ -74,9 +80,7 @@ class TestPrecastCLIIntegration(unittest.TestCase):
 
     def test_success_single_add_api(self):
         api_name = "api_name"
-        template_file_dir = os.path.join(self.snapshots_dir, "init.json")
-        new_file_dir = os.path.join(self.output_tests_dir.name, "precast.json")
-        shutil.copyfile(template_file_dir, new_file_dir)
+        new_file_dir = self.copy_file_to_temp_dir("without_components.json")
 
         result = self.run_cli(
             "add", "api", "--name", api_name, "--precast-file", new_file_dir
@@ -95,9 +99,7 @@ class TestPrecastCLIIntegration(unittest.TestCase):
 
     def test_success_multiple_add_api(self):
         api_names = ["api_name1", "api_name2"]
-        template_file_dir = os.path.join(self.snapshots_dir, "init.json")
-        new_file_dir = os.path.join(self.output_tests_dir.name, "precast.json")
-        shutil.copyfile(template_file_dir, new_file_dir)
+        new_file_dir = self.copy_file_to_temp_dir("without_components.json")
 
         for api in api_names:
             result = self.run_cli(
