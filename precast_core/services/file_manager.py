@@ -48,9 +48,7 @@ class PrecastManagerService(FileManagerBase):
             default_api = list(filter(lambda x: x["is_default"], apis))[0]
 
             if default_api.get("routers"):
-                default_api["routers"].append(
-                    component.to_precast_fields()
-                )
+                default_api["routers"].append(component.to_precast_fields())
             else:
                 component.is_default = True
                 default_api["routers"] = [component.to_precast_fields()]

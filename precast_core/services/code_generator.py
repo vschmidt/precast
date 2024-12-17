@@ -70,10 +70,12 @@ class CodeGeneratorService:
 
     def _generate_router_files(self, output_dir: str, apis: list):
         """Generate router files based on the template."""
-        endpoints_dir = os.path.join(output_dir, "endpoints")
+        api_dir = os.path.join(output_dir, "api")
+        endpoints_dir = os.path.join(api_dir, "endpoints")
         os.makedirs(endpoints_dir, exist_ok=True)
 
         # Create __init__.py in endpoints directory
+        open(os.path.join(api_dir, "__init__.py"), "a").close()
         open(os.path.join(endpoints_dir, "__init__.py"), "a").close()
 
         for api in apis:

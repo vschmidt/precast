@@ -21,11 +21,6 @@ class TestCodeGeneratorService(unittest.TestCase):
         self.output_tests_dir.cleanup()
 
     def test_apply_file_with_all_components_success(self):
-        main_file_dir = os.path.join(self.snapshots_dir, "fake_app", "main.py")
-        expected_content = ""
-        with open(main_file_dir, "r") as main_file:
-            expected_content = main_file.read()
-
         precast_file_dir = os.path.join(self.snapshots_dir, "fake_app", "precast.json")
 
         result = self.code_generator_service.apply(
@@ -33,6 +28,11 @@ class TestCodeGeneratorService(unittest.TestCase):
         )
 
         # main.py
+        main_file_dir = os.path.join(self.snapshots_dir, "fake_app", "main.py")
+        expected_content = ""
+        with open(main_file_dir, "r") as main_file:
+            expected_content = main_file.read()
+
         self.assertEqual(result, None)
         self.assertTrue(os.path.exists(self.output_tests_dir.name))
         with open(
@@ -41,8 +41,17 @@ class TestCodeGeneratorService(unittest.TestCase):
             self.assertEqual(expected_content, main_file.read())
 
         # routers
-        os.path.exists(
-            os.path.join(self.output_tests_dir.name, "endpoints", "__init__.py")
+        self.assertTrue(
+            os.path.exists(
+                os.path.join(self.output_tests_dir.name, "api", "__init__.py")
+            )
+        )
+        self.assertTrue(
+            os.path.exists(
+                os.path.join(
+                    self.output_tests_dir.name, "api", "endpoints", "__init__.py"
+                )
+            )
         )
 
         with open(precast_file_dir, "r") as precast_file:
@@ -54,6 +63,7 @@ class TestCodeGeneratorService(unittest.TestCase):
                     os.path.exists(
                         os.path.join(
                             self.output_tests_dir.name,
+                            "api",
                             "endpoints",
                             f"{router['name']}.py",
                         )

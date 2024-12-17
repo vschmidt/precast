@@ -8,5 +8,5 @@ def inject_routers(app: FastAPI):
     app.include_router(bar_router)
 
 
-orders_api = FastAPI()
-inject_routers(orders_api)
+foo_api = FastAPI()
+inject_routers(foo_api)
