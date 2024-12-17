@@ -1,10 +1,18 @@
 from typing import Optional
 from pydantic import BaseModel
+from enum import Enum
+
+
+class ComponentTypes(Enum):
+    ENDPOINT = 0
+    ROUTER = 1
+    API = 2
+    BASE = -1
 
 
 class BaseComponent(BaseModel):
     name: str
-    type: str
+    type: int = ComponentTypes.BASE
 
     def to_precast_fields(self):
         pass

@@ -3,7 +3,7 @@ import json
 import os
 from string import Template
 
-from precast_core.validators.components import ApiComponent, BaseComponent
+from precast_core.validators.components import BaseComponent, ComponentTypes
 
 
 class FileManagerBase:
@@ -33,7 +33,7 @@ class PrecastManagerService(FileManagerBase):
     def add_component(self, component: BaseComponent):
         precast_content = self.load_project_data(component.precast_file)
 
-        if component.type == "api":
+        if component.type == ComponentTypes.API.value:
             if precast_content["lenses"]["components"].get("apis"):
                 precast_content["lenses"]["components"]["apis"].append(
                     component.to_precast_fields()
@@ -43,7 +43,7 @@ class PrecastManagerService(FileManagerBase):
                 precast_content["lenses"]["components"]["apis"] = [
                     component.to_precast_fields()
                 ]
-        elif component.type == "router":
+        elif component.type == ComponentTypes.ROUTER.value:
             apis = precast_content["lenses"]["components"]["apis"]
             default_api = list(filter(lambda x: x["is_default"], apis))[0]
 

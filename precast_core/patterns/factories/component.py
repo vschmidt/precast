@@ -1,6 +1,7 @@
 from precast_core.validators.components import (
     ApiComponent,
     BaseComponent,
+    ComponentTypes,
     EndpointComponent,
     RouterComponent,
 )
@@ -20,18 +21,20 @@ class ComponentFactory:
             raise ValueError(f"Unsupported component type: {args.type}")
 
         component_data = {
-            "type": args.type,
             "name": args.name,
         }
 
         if args.type == "api":
+            component_data["type"] = ComponentTypes.API
             component_data["precast_file"] = args.precast_file
             component_data["is_default"] = getattr(args, "is_default", False)
             component_data["routers"] = getattr(args, "routers", [])
         elif args.type == "router":
+            component_data["type"] = ComponentTypes.ROUTER
             component_data["precast_file"] = args.precast_file
             component_data["api"] = getattr(args, "api", None)
         elif args.type == "endpoint":
+            component_data["type"] = ComponentTypes.ENDPOINT
             component_data["endpoint"] = args.endpoint
             component_data["method"] = args.method
 
