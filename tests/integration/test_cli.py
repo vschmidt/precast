@@ -141,6 +141,32 @@ class TestPrecastCLIIntegration(unittest.TestCase):
                     {"name": router_name},
                 )
 
+    def test_add_multiple_router_default_api_success(self):
+        router_names = ["router_name1", "router_name2"]
+        new_file_dir = self.copy_file_to_temp_dir("with_an_api_components.json")
+
+        for router_name in router_names:
+            result = self.run_cli(
+                "add", "router", "--name", router_name, "--precast-file", new_file_dir
+            )
+            self.assertEqual(result.returncode, SubprocessReturnCode.SUCCESS.value)
+
+        self.assertTrue(os.path.exists(new_file_dir))
+
+        with open(new_file_dir) as file:
+            content = json.loads(file.read())
+            apis = content["lenses"]["components"]["apis"]
+
+            for api in apis:
+                self.assertEqual(len(api["routers"]), 2)
+                self.assertEqual(
+                    api["routers"],
+                    [
+                        {"name": "router_name1"},
+                        {"name": "router_name2"},
+                    ],
+                )
+
     def test_apply_with_success(self):
         precast_file_dir = os.path.join(self.snapshots_dir, "fake_app", "precast.json")
 

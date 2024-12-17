@@ -48,7 +48,7 @@ class PrecastManagerService(FileManagerBase):
             default_api = list(filter(lambda x: x["is_default"], apis))[0]
 
             if default_api.get("routers"):
-                precast_content["lenses"]["components"]["apis"].append(
+                default_api["routers"].append(
                     component.to_precast_fields()
                 )
             else:
