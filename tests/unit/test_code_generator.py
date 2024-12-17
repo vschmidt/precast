@@ -20,7 +20,7 @@ class TestCodeGeneratorService(unittest.TestCase):
     def tearDown(self):
         self.output_tests_dir.cleanup()
 
-    def test_apply_file_with_api_success(self):
+    def test_apply_file_with_all_components_success(self):
         main_file_dir = os.path.join(self.snapshots_dir, "fake_app", "main.py")
         expected_content = ""
         with open(main_file_dir, "r") as main_file:

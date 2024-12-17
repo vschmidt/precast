@@ -4,7 +4,7 @@
     "components": {
       "apis": [
         {
-          "name": "orders_api",
+          "name": "foo_api",
           "is_default": true,
           "routers": [
             {
