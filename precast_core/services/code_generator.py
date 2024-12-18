@@ -25,7 +25,7 @@ class CodeGeneratorService:
         endpoints_imports, routers_inject = self._process_apis(apis)
 
         # Generate main.py
-        self._generate_main_py(output_dir, endpoints_imports, routers_inject, apis)
+        self._generate_main(output_dir, endpoints_imports, routers_inject, apis)
 
         # Generate router files
         self._generate_router_files(output_dir, apis)
@@ -52,9 +52,7 @@ class CodeGeneratorService:
 
         return endpoints_imports, routers_inject_str
 
-    def _generate_main_py(
-        self, output_dir: str, imports: str, routers: str, apis: list
-    ):
+    def _generate_main(self, output_dir: str, imports: str, routers: str, apis: list):
         """Generate the main.py file based on the template."""
         main_template_parameters = {
             "imports": imports,
@@ -81,12 +79,11 @@ class CodeGeneratorService:
         for api in apis:
             for router in api.get("routers", []):
                 router_name = router.get("name")
-                if router_name:
-                    self._write_file_from_template(
-                        template_path=self.router_file_template,
-                        output_path=os.path.join(endpoints_dir, f"{router_name}.py"),
-                        parameters={},
-                    )
+                self._write_file_from_template(
+                    template_path=self.router_file_template,
+                    output_path=os.path.join(endpoints_dir, f"{router_name}.py"),
+                    parameters={"router_name": router_name},
+                )
 
     def _write_file_from_template(
         self, template_path: str, output_path: str, parameters: dict
