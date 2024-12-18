@@ -26,7 +26,7 @@ class EndpointComponent(BaseComponent):
 class RouterComponent(BaseComponent):
     precast_file: str
     is_default: bool = False
-    api: Optional[str]
+    endpoints: list[EndpointComponent] = []
 
     def to_precast_fields(self):
         return {"name": self.name}
@@ -35,11 +35,11 @@ class RouterComponent(BaseComponent):
 class ApiComponent(BaseComponent):
     precast_file: str
     is_default: bool = False
-    routers: list = []
+    routers: list[RouterComponent] = []
 
     def to_precast_fields(self):
         return {
             "name": self.name,
             "is_default": self.is_default,
-            "routers": self.routers,
+            "routers": [router.to_precast_fields() for router in self.routers],
         }

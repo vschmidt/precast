@@ -3,7 +3,11 @@ import json
 import os
 from string import Template
 
-from precast_core.validators.components import BaseComponent, ComponentTypes
+from precast_core.validators.components import (
+    BaseComponent,
+    ComponentTypes,
+    RouterComponent,
+)
 
 
 class FileManagerBase:
@@ -34,12 +38,24 @@ class PrecastManagerService(FileManagerBase):
         precast_content = self.load_project_data(component.precast_file)
 
         if component.type == ComponentTypes.API.value:
+            default_router = RouterComponent(
+                **{
+                    "name": "default_router",
+                    "type": ComponentTypes.ROUTER,
+                    "precast_file": component.precast_file,
+                    "is_default": True,
+                }
+            )
+
+            component.routers.append(default_router)
+
             if precast_content["lenses"]["components"].get("apis"):
                 precast_content["lenses"]["components"]["apis"].append(
                     component.to_precast_fields()
                 )
             else:
                 component.is_default = True
+
                 precast_content["lenses"]["components"]["apis"] = [
                     component.to_precast_fields()
                 ]

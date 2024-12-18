@@ -94,7 +94,13 @@ class TestPrecastCLIIntegration(unittest.TestCase):
 
             self.assertEqual(
                 content["lenses"]["components"]["apis"],
-                [{"name": api_name, "is_default": True, "routers": []}],
+                [
+                    {
+                        "name": api_name,
+                        "is_default": True,
+                        "routers": [{"name": "default_router"}],
+                    }
+                ],
             )
 
     def test_success_multiple_add_api(self):
@@ -114,8 +120,16 @@ class TestPrecastCLIIntegration(unittest.TestCase):
             self.assertEqual(
                 content["lenses"]["components"]["apis"],
                 [
-                    {"name": "api_name1", "is_default": True, "routers": []},
-                    {"name": "api_name2", "is_default": False, "routers": []},
+                    {
+                        "name": "api_name1",
+                        "is_default": True,
+                        "routers": [{"name": "default_router"}],
+                    },
+                    {
+                        "name": "api_name2",
+                        "is_default": False,
+                        "routers": [{"name": "default_router"}],
+                    },
                 ],
             )
 

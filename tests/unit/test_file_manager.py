@@ -86,7 +86,7 @@ class TestPrecastManagerService(unittest.TestCase):
 
             self.assertEqual(type(content), dict)
             self.assertEqual(
-                apis, [{"name": "api_name", "is_default": True, "routers": []}]
+                apis, [{"name": "api_name", "is_default": True, "routers": [{"name": "default_router"}],}]
             )
 
     def test_add_two_api_success(self):
@@ -117,7 +117,7 @@ class TestPrecastManagerService(unittest.TestCase):
             self.assertEqual(
                 apis,
                 [
-                    {"name": "api_name_1", "is_default": True, "routers": []},
-                    {"name": "api_name_2", "is_default": False, "routers": []},
+                    {"name": "api_name_1", "is_default": True, "routers": [{"name": "default_router"}],},
+                    {"name": "api_name_2", "is_default": False, "routers": [{"name": "default_router"}],},
                 ],
             )
