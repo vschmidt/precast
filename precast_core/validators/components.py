@@ -19,6 +19,7 @@ class BaseComponent(BaseModel):
 
 
 class EndpointComponent(BaseComponent):
+    precast_file: str
     endpoint: str
     method: str
 

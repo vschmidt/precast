@@ -35,6 +35,7 @@ class ComponentFactory:
             component_data["api"] = getattr(args, "api", None)
         elif args.type == "endpoint":
             component_data["type"] = ComponentTypes.ENDPOINT
+            component_data["precast_file"] = args.precast_file
             component_data["endpoint"] = args.endpoint
             component_data["method"] = args.method
 

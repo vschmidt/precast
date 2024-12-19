@@ -52,7 +52,7 @@ class PrecastCLI:
         subparsers_add = parser_add.add_subparsers()
 
         # Generic "add" sub-command
-        for component_type in ["api", "router"]:
+        for component_type in ["api", "router", "endpoint"]:
             parser_component = subparsers_add.add_parser(
                 component_type, help=f"Create {component_type.capitalize()} component"
             )
@@ -66,6 +66,17 @@ class PrecastCLI:
                 default="precast.json",
                 help="Path to the precast.json file",
             )
+
+            if component_type == "endpoint":
+                parser_component.add_argument(
+                    "--method",
+                    help="HTTP method",
+                )
+                parser_component.add_argument(
+                    "--endpoint",
+                    help="Path of endpoint",
+                )
+
             parser_component.set_defaults(func=self.add_component, type=component_type)
 
         # "apply" command
