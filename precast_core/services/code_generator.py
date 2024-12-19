@@ -79,10 +79,24 @@ class CodeGeneratorService:
         for api in apis:
             for router in api.get("routers", []):
                 router_name = router.get("name")
+                endpoints = ""
+
+                # Generate endpoint definitions
+                for endpoint in router.get("endpoints", []):
+                    method = endpoint.get("method", "get").lower()
+                    path = endpoint.get("endpoint", "/")
+                    function_name = endpoint.get("name", "endpoint_function")
+                    endpoints += (
+                        f'\n@{router_name}.{method}("{path}")\n'
+                        f"def {function_name}():\n"
+                        f'    return JSONResponse(status_code=status.HTTP_200_OK, content={{"message": "Not Implemented"}})\n'
+                    )
+
+                # Write the router file
                 self._write_file_from_template(
                     template_path=self.router_file_template,
                     output_path=os.path.join(endpoints_dir, f"{router_name}.py"),
-                    parameters={"router_name": router_name},
+                    parameters={"router_name": router_name, "endpoints": endpoints},
                 )
 
     def _write_file_from_template(

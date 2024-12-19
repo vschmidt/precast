@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import tempfile
 import shutil
 import unittest
@@ -135,3 +136,44 @@ class TestCodeGeneratorService(unittest.TestCase):
                 self.assertFalse(
                     missing_imports, f"Missing imports {', '.join(missing_imports)}"
                 )
+
+    def test_endpoints_content_is_correct_when_apply_file_with_all_components_success(
+        self,
+    ):
+        precast_file_dir = os.path.join(self.snapshots_dir, "fake_app", "precast.json")
+
+        self.code_generator_service.apply(precast_file_dir, self.output_tests_dir.name)
+
+        with open(precast_file_dir, "r") as precast_file:
+            precast_content = json.loads(precast_file.read())
+
+        apis = precast_content["lenses"]["components"]["apis"]
+
+        for api in apis:
+            for router in api["routers"]:
+                router_path = os.path.join(
+                    self.output_tests_dir.name,
+                    "api",
+                    "endpoints",
+                    f"{router['name']}.py",
+                )
+                with open(router_path, "r") as router_file:
+                    router_content = router_file.read()
+
+                try:
+                    compile(router_content, "<string>", "exec")
+                except SyntaxError as e:
+                    self.fail(f"Generated code is not valid Python: {e}")
+
+                # have endpoints created?
+                for endpoint in router["endpoints"]:
+                    endpoint_regex = (
+                        rf'\@{router["name"]}\.{endpoint["method"].lower()}'
+                        rf'\("{endpoint["endpoint"]}"\)'
+                    )
+
+                    if not re.search(endpoint_regex, router_content):
+                        self.fail(
+                            f"Endpoint '{endpoint['method']} {endpoint['endpoint']}' "
+                            f"not found in router '{router['name']}'."
+                        )
